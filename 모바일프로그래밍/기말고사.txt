@@ -1,14 +1,21 @@
 Chap 06
 1. 시간 및 날짜와 관련된 위젯을 모두 열거하시오
+-AnalogClock, DigitalClock, Chronometer, TimePicker, DatePicker, CalendarView
 
 
 2. 크로노미터의 초기화, 시작, 중지에 사용하는 세 가지 메소드는 무엇인가?
+-start(), stop(), reset()
 
 
 3. 진행 상태를 표시하는 세 가지 위젯의 차이점을 간단히 설명하시오
+-ProgressBar : 작업 진행 상태 원 또는 바 형태로 제공. 진행도 확인만 가능
+SeekBar : 위랑 비슷한데 사용자가 터치로 조작 가능 
+RatingBar : 진행 상태 별 모양 표시 
 
 
 4. 위젯이 많아서 화면에 넘칠 때, ( 1 )에 넣으면 세로 스크롤 효과를 낼 수 있고 ( 2 )에 넣으면 가로 스크롤 효과를 낼 수 있다.
+-(1) ScrollView       (2) HorizontalScrollView
+-> ScrollView는 하나의 위젯만 넣을 수 있음
 
 
 5. 슬라이딩드로어를 만드는 다음 XML 코드를 완성하시오
@@ -24,27 +31,124 @@ Chap 06
     </LinearLayout>
 </SlidingDrawer>
 
+(1) myhandle        (2) mycontent
+
 
 Chap 07
 1. (  1  ) 메뉴는 키패드의 메뉴 버튼을 누르면 화면 하단에 나오고, (  2  ) 메뉴는 위젯을 롱클릭하면 나온다
+(1) 옵션 메뉴       (2) 컨텍스트 메뉴
 
 
 2. '항목1'과 '항목'2'로 구성된 메뉴 xml 파일을 코딩하시오
+<menu>
+    <item 
+        android:id="@+id/항목1아이디"
+        android:title="항목1입니다" />
+    <item 
+        android:id="@+id/항목2아이디"
+        android:title="항목2입니다" />    
+</menu>
 
 
 3. 2번의 xml 파일에 대응되는 onOptionsItemSelected()를 코딩하시오
+override fun onCreateOptionsMenu(menu: Menu?) : Boolean {
+    super.onCreateOptionsMenu(menu)
+    var mInflater = menuInflater
+    mInflater.inflate(R.menu.메뉴XML아이디, menu)
+    return true
+}
 
 
 4. 옵션 메뉴를 선택하면 동물 사진이 바뀌는 프로젝트를 메뉴 xml 파일 없이 작성하시오
+override fun onCreateOptionsMenu(menu: Menu?) : Boolean {
+    super.onCreateOptionsMenu(menu)
 
+    menu!!.add(0, 1, 0, "강아지")
+    menu!!.add(0, 2, 0, "고양이")
+    menu!!.add(0, 3, 0, "토끼")
+
+    return true
+}
+
+override fun onOptionsItemSelected(item: MenuItem) : Boolean {
+    when (item.itemId) {
+        1 -> {
+            imgView.setImageResource(R.drawable.dog)
+            return true
+        }
+        2 -> {
+            imgView.setImageResource(R.drawable.cat)
+            return true
+        }
+        3 -> {
+            imgView.setImageResource(R.drawable.rabbit)
+            return true
+        }
+    }
+    return false
+}
 
 5. 버튼 클릭 시 임의의 위치에 이미지가 들어간 토스트가 나오는 프로젝트를 작성하시오
+-activity_main.xml
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:orientation="vertical"
+    android:gravity="center">
 
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="토스트 보내기"/>
+</LinearLayout>
+
+-toast_image.xml
+<LinearLayout
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/imgView1"
+        android:layout_width="wrap_content"
+        android:layout_height=wrap_content"
+        android:src="@drawable/btn_star_big_on" />
+</LinearLayout>
+
+-MainActivity.kt
+class MainActivity : AppCompatActivity() {
+    lateinit var toast_button : Button
+    lateinit var toastView : View
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        title = "연습문제 7-5"
+
+        toast_button = findViewById<Button>(R.id.button1)
+
+        toast_button.setOnClickListener {
+            toastView = View.inflate(this@MainActivity, R.layout.toast_image, null)
+
+            var toast = Toast(this@MainActivity)
+            var display = (getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay
+            var xOffset = (Math.random() * display.width).toInt()
+            var yOffset = (Math.random() * display.height).toInt()
+            toast.setGravity(Gravity.TOP or Gravity.LEFT, xOffset, yOffset)
+            toast.view = toastView
+
+            toast.show()
+        }
+    }
+}
 
 
 Chap 08
 1. 내장 메모리에 파일을 처리하는 Context 클래스의 메소드 2개와 내장 메모리의 저장 위치를 쓰시오
-
+메소드 : openFileInput(), OpenFileOutput()
+내장 메모리 저장 위치 : /data/data/패키지명/files폴더
 
 2. 예제 8-5의 4~7행에서 4행을 생략한다면 5~7행을 어떻게 바꿔야할까?
 // var cal = Calendar.getInstance()
@@ -52,18 +156,31 @@ var cYear = (       1       )
 var cMonth = (       2       )
 var cDay = (        3       )
 
+(1) Calendar.getInstance().get(Calendar.YEAR)
+(2) Calendar.getInstance().get(Calendar.MONTH)
+(3) Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
+
 
 3. 다음은 /res/raw 폴더의 mytext.txt 파일을 읽는 코틀린 코드이다.
 var inputS = (      1       )
 var txt = (       2       )
 inputS.read(txt)
 
+(1) resources.openRawResource(R.raw.파일이름)
+(2) ByteArray(inputS.available())
+
 
 4. SD 카드에서 파일을 읽거나 쓰기 위해 AndroidManifest.xml에 추가할 내용을 작성하시오
-
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+<application android:requestLegacyExternalStorage="true"/>
 
 
 5. 안드로이드 시스템 폴더의 경로를 구하려면 android.os.Environment 클래스의 getRootDirectory() 메소드를 사용한다. 그 외 Environment 클래스의 폴더 경로와 관련된 메소드를 조사하시오
+getDataDirectory : 유저 데이터 디렉터리 경로 출력
+getDownloadCacheDirectory() : download/cache 디렉터리 경로 출력
+getExternalStorageDirectory() - deprecated : 외부 저장소 디렉터리 경로 출력
+getExternalStorageState() : 공유/외부 저장소 미디어의 현재 상태 출력
+getStorageDirectory() : 마운트 된 외부 저장소 루트 디렉토리 경로 출력
 
 
 6. 직접 풀어보기 8-1의 일기장 앱을 내장 메모리가 아닌 SD 카드의 myDiary 폴더에 저장되도록 수정하시오. 단 SD 카드에 myDiary가 없으면 코틀린 코드에서 자동 생성되게 한다.
@@ -72,28 +189,126 @@ inputS.read(txt)
 
 Chap 09
 1. 화면에 도형을 그릴 때 사용하는 클래스 중 ( 1 )는 도화지, ( 2 )는 붓 혹은 물감과 개념이 비슷하다.
+(1) Canvas 클랙스       (2) Paint 클래스
 
 
 2. 각각을 설명하는 클래스 및 속성 또는 메소드를 쓰시오
 ex) 색상 설정 - Paint.color
-선 두께 설정 -
-도형의 내부를 채울지 여부 설정 - 
-원을 그림 - 
-연속된 점을 연결하여 그림 - 
-글자 크기 설정 - 
-여러 개의 점을 화면에 찍음 -
-글자의 정렬 방법 설정 -
+선 두께 설정 - Paint.strokeWidth
+도형의 내부를 채울지 여부 설정 - Paint.style 
+원을 그림 - canvas.drawCircle(cx, cy, radius, paint)
+연속된 점을 연결하여 그림 - canvas.drawLine(startX, startY, stopX, stopY, paint)
+글자 크기 설정 - paint.textSize
+여러 개의 점을 화면에 찍음 - canvas.drawPoints(FloatArray, paint)
+글자의 정렬 방법 설정 - paint.textAlign
 
 
 3. 리소스의 이미지는 (  1  ) 메소드를 이용하고, SD 카드의 이미지는 (  2  ) 메소드를 이용하여 접근한다. 그리고 이미지를 화면에 출력하는 데에는 공통적으로 (  3  ) 메소드를 사용한다.
 비트맵 자원을 해제하려면 (  4  ) 메소드를 사용한다.
+(1) BitmapFactory.decodeResource(resources, 그림 id)
+(2) BitmapFactory.decodeFile(파일 경로)
+(3) drawBitmap(pictue, startX, startY, Paint)
+(3) recycle()
 
 
 4. 블러링 효과를 주려면 (  1  ) 클래스를, 엠보싱 효과를 주려면 (  2  ) 클래스를, 색상이나 밝기를 조절하려면 (  3  ), (  4  ) 클래스를 사용한다.
 또한 컬러 이미지를 회색 이미지로 변환하려면 (  5  ) 메소드를 사용한다.
-
+(1) BlurMaskFilter(radius, style)
+(2) EmbossMaskFilter(FloatArray, ambient, specular, blurRadius)
+(3) ColorMatrix(FloatArray)
+(4) ColorMatrixColorFilter(ColorMatrix)
+(5) ColorMatrix.setSaturation(satur)
 
 5. 실습 9-2의 아이콘을 모두 없애고 컨텍스트 메뉴로 변경하시오. 단, 별도의 메뉴 xml 파일을 만들지 말고 코틀린 코드로만 작성
+-main.xml
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:id="@+id/cxtMenuLayout"
+        android:gravity="center"
+        android:orientation="vertical" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:id="@+id/pictureLayout"
+        android:gravity="center"
+        android:orientation="vertical" />
+</LinearLayout>
+
+-MainActivity.kt
+class MainActivity : AppCompatActivity() {
+    lateinit var contextMenu : LinearLayout
+    lateinit var graphicView : MyGraphicView
+
+    companion object {
+        var sX = 1f
+        var sY = 1f
+        var angle = 1f
+        var color = 1f
+        var satur = 1f
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        title = "연습문제 9-5"
+
+        contextMenu = findViewById<LinearLayout>(R.id.cxtMenuLayout)
+        registerForContextMenu(contextMenu)
+
+        var pictureLayout = findViewById<LinearLayout>(R.id.pictureLayout)
+        graphicView = MyGraphicView(this)
+        pictureLayout.addView(graphicView)
+    }
+
+    override fun onCreateContextMenu(------) {
+        menu!!.add(0, 1, 0, "확대")
+        menu!!.add(0, 2, 0, "축소")
+        menu!!.add(0, 3, 0, "회전")
+        menu!!.add(0, 4, 0, "밝게")
+        menu!!.add(0, 5, 0, "어둡게")
+        menu!!.add(0, 6, 0, "그레이영상")
+    }
+
+    override fun onContextItemSelected(--------) {
+        when(item.itemId) {
+            1 -> {
+                sX += o.2f
+                sY += o.2f
+                graphicView.invalidate()
+            }
+            2 같
+
+            3 -> {
+                angle += 20
+                graphicView.invalidate()
+            }
+
+            4 -> {
+                color += 0.2f
+                graphicView.invalidate()
+            }
+            5 같
+            6 -> {
+                if(satur == 0f)
+                    satur = 1f
+                else
+                    satur = 0f
+                graphicView.invalidate()
+            }
+        }
+        return super.onContextItemSelected(item)
+    }
+}
 
 
 6. 직접 풀어보기 9-2를 이전에 그린 도형이 계속 화면에 남아 있도록 수정하시오
@@ -110,19 +325,32 @@ class MyShape {
 2) 동적 리스트의 예
 var myshape : ArrayList<MyShape> = ArrayList()
 
+var startX = -1f
+y, stopx,y
+
 
 
 Chap 10
 1.안드로이드 컴포넌트 중 (  1  )는 응용 프로그램 사이에 데이터를 공유하기 위한 용도로, (  2  )는 여러 응용 프로그램이나 장치에 메시지를 전달하기 위한 용도로, (  3  )는 백그라운드에서 작동하기 위한 용도로, (  4  )는 화면을 구성하는 용도로 사용된다.
+(1) Content Provider
+(2) Broadcast Receiver
+(3) Service
+(4) Activity
 
 
 2. 명시적 인텐트에서 데이터를 전달할 때, 메인 액티비티에서 (  1  ) 메소드로 인텐트에 데이터를 넣고, (  2  ) 매소드로 인텐트를 서브 액티비티에 넘긴다. 서브 액티비티에서는 받은 데이터에 (  3  ), (  4  ), (  5  ) 등의 메소드로 접근한다.
+(1) putExtra        (2) startActivity       (3) getStringExtra, getIntExtra, getBooleanExtra
 
 
 3. 양방향 액티비티에서 메인 액티비티는 (  1  ) 메소드로 서브 액티비티를 호출하고, 서브 액티비티는 (  2  ) 메소드로 결과를 돌려준다.
+(1) startActivityForResult      (2) onActivityResult
 
 
 4. 액티비티가 정상적으로 시작하고 종료할 때 호출되는 액티비티 클래스의 메소드를 차례대로 나열하시오
+액티비티 시작 : onCreate - onStart - onResume
+액티비티 종료 : onPause - onStop - onDestroy
+다른 액티비티 요청 : onPause - onStop
+다른 액티비티 종료 : onRestart - onStart - onResume
 
 
 5. 실습 10-1을 개선하여 프로젝트 작성
@@ -135,15 +363,38 @@ Chap 10
 
 Chap 11
 1.AdapterView 클래스의 하위 클래스 10개를 나열하시오
+-Direct Subclasses
+Class Name : Class Content
+AbsListView : 가상화된 리스트 구현을 위한 기본 클래스
+AbsSpinner : 스피너 위젯 추상 클래스
+AdapterViewAnimator : 뷰 사이의 스위칭 시 애니메이션 기본 클래스
+
+-Indirect Subclasses
+class Name : Class Content
+AdapterViewFlipper : ViewAnimator 클래스보다 간단한 클래스
+Gallery : ViewPager와 HorizontalScrollView를 포함한 수평 스크롤링
+GridView : 그리드 형식의 뷰. 차원 스크롤링
+ListView : 리스트 형식의 뷰. 수직 스크롤링
+Spinner : PC의 드롭박스 다운같은 기능
+StackView
 
 
 2. 리스트뷰의 모양을 표현하는 클래스 상수에는 android.R.layout.simple_list_item_1 외에 무엇이 있는지 조사하시오
+Const Class : Class Content
+simple_list_item_2 : 리스트 형태의 다른 버전
+simple_list_item_activated_1 : simple_list_item_1에서 체크 시 백그라운드 상태를 바꿀 수 있음
+simple_list_item_activated_2 : simple_list_item_2에서 체크 시 백그라운드 상태를 바꿀 수 있음
+simple_list_item_checked : 체크박스 형태의 리스트
+simple_list_item_multiple_choice : 다중 체크가 가능한 체크박스 형태의 리스트
+simple_list_item_single_choice : 라디오버튼 형태의 리스트
+simplie_selectable_list_item : 텍스트와 (싱글, 멀티) 아이템 선택 가능한 리스트
 
 
 3. 예제 11-8에서 BaseAdapter 클래스를 상속받을 때 완성되는 getCount(), getItem() 등의 추상 메소드는 어떤 인터페이스에 속하는가?
+From interface android.widget.Adapter
 
 
 4. (  1  )는 사진이나 이미지를 배치하고 좌우로 스크롤하여 볼 수 있게 해주며, (  2  )는 PC의 드롭다운 박스와 비슷한 기능을 한다.
-
+(1) Gallery         (2) Spinner
 
 5. 직접 풀어보기 11-3을 개선하여 영화 포스트가 이미지뷰가 아닌 예제 9-6의 MyGraphicView에 출력되도록 프로젝트를 작성하시오. 그리고 컨텍스트 메뉴로 영화 포스터가 기하학적 변환이 되게 하시오
